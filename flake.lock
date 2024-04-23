@@ -54,11 +54,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1713910890,
-        "narHash": "sha256-/ZLEA9GUz/gI7YFw08HOvwwGJLpuy6aY9UqdBKPgfoM=",
+        "lastModified": 1713911118,
+        "narHash": "sha256-Ky3P643j5liWWSbmzeLQBr1A4h8/Bc3isQD3i/AP0J0=",
         "owner": "wrsturgeon",
         "repo": "jax-attention",
-        "rev": "edb5d1a3ff07554ab4b176e73b23a54e3f7422d1",
+        "rev": "25752edf1704c63d4f8e8a9696b8ae6ecdb51c7f",
         "type": "github"
       },
       "original": {
