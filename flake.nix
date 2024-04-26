@@ -4,6 +4,7 @@
     check-and-compile = {
       inputs = {
         flake-utils.follows = "flake-utils";
+        nixfmt.follows = "nixfmt";
         nixpkgs.follows = "nixpkgs";
       };
       url = "github:wrsturgeon/check-and-compile";
@@ -13,9 +14,14 @@
       inputs = {
         check-and-compile.follows = "check-and-compile";
         flake-utils.follows = "flake-utils";
+        nixfmt.follows = "nixfmt";
         nixpkgs.follows = "nixpkgs";
       };
       url = "github:wrsturgeon/jax-attention";
+    };
+    nixfmt = {
+      inputs.flake-utils.follows = "flake-utils";
+      url = "github:serokell/nixfmt";
     };
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
   };
@@ -24,6 +30,7 @@
       check-and-compile,
       flake-utils,
       jax-attention,
+      nixfmt,
       nixpkgs,
       self,
     }:
@@ -100,6 +107,10 @@
               check-pkgs
               ci-pkgs
             ];
+            find = "${pkgs.findutils}/bin/find";
+            nixfmt-bin = "${nixfmt.packages.${system}.default}/bin/nixfmt";
+            rm = "${pkgs.coreutils}/bin/rm";
+            xargs = "${pkgs.findutils}/bin/xargs";
             exec = ''
               #!${pkgs.bash}/bin/bash
 
@@ -107,7 +118,9 @@
 
               export JAX_ENABLE_X64=1
 
-              ${python} -m black --line-length=100 --check .
+              ${rm} -fr result
+              ${find} . -name '*.nix' | ${xargs} ${nixfmt-bin} --check
+              ${python} -m black --check .
               ${python} -m mypy .
 
               ${python} -m coverage run --omit='/nix/*' -m pytest -Werror test.py
@@ -118,10 +131,6 @@
             inherit pname version src;
             buildPhase = ":";
             installPhase = ''
-              mkdir -p $out/${pypkgs.python.sitePackages}
-              mv ./${pyname} $out/${pypkgs.python.sitePackages}/${pyname}
-              mv ./test.py $out/test.py
-
               mkdir -p $out/bin
               echo "${exec}" > $out/bin/${pname}
               chmod +x $out/bin/${pname}

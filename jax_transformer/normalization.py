@@ -21,9 +21,9 @@ def init(d_model: int) -> Parameters:
 @check_and_compile()
 def layer_norm(
     params: Parameters,
-    unnormalized: Float32[Array, "*etc d_model"],
+    unnormalized: Float32[Array, "*batch seq d_model"],
     epsilon: Float32[Array, ""] = jnp.array(1e-8, dtype=jnp.float32),
-) -> Float32[Array, "*etc d_model"]:
+) -> Float32[Array, "*batch seq d_model"]:
 
     d_model = unnormalized.shape[-1]
     assert params.weights.shape == (d_model,)
