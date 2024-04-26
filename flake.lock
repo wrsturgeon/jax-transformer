@@ -13,11 +13,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1714108723,
-        "narHash": "sha256-E3vnWi3RtKDCZIA1zC9+uTIuOzew7rXWLPmkdE0dcSI=",
+        "lastModified": 1714171506,
+        "narHash": "sha256-x+LZT16JTmbxV+OdfOAgJp5Ld/caiUDWBdktVRR+t2I=",
         "owner": "wrsturgeon",
         "repo": "check-and-compile",
-        "rev": "8f56aaaffc54ec9dde713f5dc7dfaa183a317ccf",
+        "rev": "e8c17775bbd7c85db9955bfbe409320022440b9c",
         "type": "github"
       },
       "original": {
@@ -60,11 +60,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1714156230,
-        "narHash": "sha256-rO3SeCR7yv4WY00xShU84sDrBcvbu6RjxBPmNpHYiYc=",
+        "lastModified": 1714171536,
+        "narHash": "sha256-6+WA1I4US6tlT0YvNG1Pf0B9zUZK6DpkDIF3HHpWiS8=",
         "owner": "wrsturgeon",
         "repo": "jax-attention",
-        "rev": "b486e94712009c6dd1f7c8a081b991e002629c5c",
+        "rev": "6689b7e203e5af9968e8b4900d026e3415c77332",
         "type": "github"
       },
       "original": {
