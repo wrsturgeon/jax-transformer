@@ -1,3 +1,4 @@
+import jax_transformer
 from jax_transformer import (
     decoder,
     encoder,
@@ -12,7 +13,7 @@ from jax import numpy as jnp, random as jrnd
 
 def test_positional_encoding() -> None:
     assert jnp.allclose(
-        positional_encoding.encode_position(
+        positional_encoding.encode_positions(
             jnp.zeros([13, 7], dtype=jnp.float32),  # odd number!
             jnp.ones([13], dtype=jnp.float32),
         ),
@@ -103,8 +104,8 @@ def test_encoder() -> None:
     d_model = 10
     p = encoder.init(
         jrnd.PRNGKey(42),
-        stack_depth=3,
         d_model=d_model,
+        stack_depth=3,
         d_attn=11,
         heads=12,
         d_k=13,
@@ -160,8 +161,8 @@ def test_encoder() -> None:
 
 
 def test_decoder() -> None:
-    stack_depth = 3
     d_model = 10
+    stack_depth = 3
     d_attn = 11
     heads = 8
     d_k = 12
@@ -171,8 +172,8 @@ def test_decoder() -> None:
     k1, k2 = jrnd.split(jrnd.PRNGKey(42))
     p_e = encoder.init(
         k1,
-        stack_depth=stack_depth,
         d_model=d_model,
+        stack_depth=stack_depth,
         d_attn=d_attn,
         heads=heads,
         d_k=d_k,
@@ -181,8 +182,8 @@ def test_decoder() -> None:
     )
     p_d = decoder.init(
         k2,
-        stack_depth=stack_depth,
         d_model=d_model,
+        stack_depth=stack_depth,
         d_attn=d_attn,
         heads=heads,
         d_k=d_k,
@@ -255,6 +256,125 @@ def test_decoder() -> None:
                     -0.5184302,
                     +1.7218025,
                     +0.1995178,
+                ],
+            ],
+            dtype=jnp.float32,
+        ),
+    )
+
+
+def test_the_whole_enchilada() -> None:
+    n_outputs = 9
+    d_model = 10
+    encoder_stack_depth = 3
+    encoder_d_attn = 11
+    encoder_heads = 8
+    encoder_d_k = 12
+    encoder_d_v = 13
+    encoder_d_ff = 14
+    decoder_stack_depth = 2
+    decoder_d_attn = 12
+    decoder_heads = 9
+    decoder_d_k = 13
+    decoder_d_v = 14
+    decoder_d_ff = 15
+    seq_in = 5
+    seq_out = 6
+    p = jax_transformer.init(
+        jrnd.PRNGKey(42),
+        n_outputs=n_outputs,
+        d_model=d_model,
+        encoder_stack_depth=encoder_stack_depth,
+        encoder_d_attn=encoder_d_attn,
+        encoder_heads=encoder_heads,
+        encoder_d_k=encoder_d_k,
+        encoder_d_v=encoder_d_v,
+        encoder_d_ff=encoder_d_ff,
+        decoder_stack_depth=decoder_stack_depth,
+        decoder_d_attn=decoder_d_attn,
+        decoder_heads=decoder_heads,
+        decoder_d_k=decoder_d_k,
+        decoder_d_v=decoder_d_v,
+        decoder_d_ff=decoder_d_ff,
+    )
+    x = jnp.arange(seq_in * d_model, dtype=jnp.float32).reshape(seq_in, d_model)
+    y = jnp.arange(seq_out * d_model, dtype=jnp.float32).reshape(seq_out, d_model)
+    z = jax_transformer.run(
+        p,
+        x,
+        jnp.arange(seq_in, dtype=jnp.float32),
+        y,
+        jnp.arange(seq_out, dtype=jnp.float32),
+    )
+    assert jnp.allclose(
+        z,
+        jnp.array(
+            [
+                [
+                    0.17505197,
+                    0.04742195,
+                    0.01293014,
+                    0.10680432,
+                    0.03871513,
+                    0.00423843,
+                    0.17559697,
+                    0.29902983,
+                    0.14021130,
+                ],
+                [
+                    0.05879280,
+                    0.04585971,
+                    0.00760760,
+                    0.10819057,
+                    0.00987272,
+                    0.00160249,
+                    0.01597695,
+                    0.51992905,
+                    0.23216805,
+                ],
+                [
+                    0.04918179,
+                    0.03297389,
+                    0.01269395,
+                    0.10675289,
+                    0.00951022,
+                    0.00322129,
+                    0.01250002,
+                    0.56016785,
+                    0.21299809,
+                ],
+                [
+                    0.04371389,
+                    0.02950457,
+                    0.01335536,
+                    0.09194661,
+                    0.00873852,
+                    0.00436847,
+                    0.00943554,
+                    0.62318950,
+                    0.17574756,
+                ],
+                [
+                    0.03916314,
+                    0.02880506,
+                    0.01326683,
+                    0.08071300,
+                    0.00824444,
+                    0.00558823,
+                    0.00731786,
+                    0.66575020,
+                    0.15115133,
+                ],
+                [
+                    0.03729157,
+                    0.02811353,
+                    0.01384145,
+                    0.07517507,
+                    0.00809569,
+                    0.00684557,
+                    0.00621212,
+                    0.68896110,
+                    0.13546383,
                 ],
             ],
             dtype=jnp.float32,

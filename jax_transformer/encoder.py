@@ -16,13 +16,13 @@ class Parameters(NamedTuple):
 @jaxtyped(typechecker=beartype)
 def init(
     key: Array,
-    stack_depth: int = 6,
-    d_model: int = 512,
-    d_attn: int = 512,
-    heads: int = 8,
-    d_k: int = 64,
-    d_v: int = 64,
-    d_ff: int = 2048,
+    d_model: int,
+    stack_depth: int,
+    d_attn: int,
+    heads: int,
+    d_k: int,
+    d_v: int,
+    d_ff: int,
 ) -> List[Parameters]:
     k1, k2 = jrnd.split(key)
     keys = zip(jrnd.split(k1, num=stack_depth), jrnd.split(k2, num=stack_depth))
@@ -53,12 +53,12 @@ def init(
 @check_and_compile(3, 4, 5)
 def encode(
     params: List[Parameters],
-    input_embedding: Float32[Array, "*batch seq d_model"],
-    position: Float32[Array, "*batch seq"],
-    encode_position: Callable[
+    input_embeddings: Float32[Array, "*batch seq d_model"],
+    positions: Float32[Array, "*batch seq"],
+    encode_positions: Callable[
         [Float32[Array, "*batch seq d_model"], Float32[Array, "*batch seq"]],
         Float32[Array, "*batch seq d_model"],
-    ] = lambda x, p: positional_encoding.encode_position(
+    ] = lambda x, p: positional_encoding.encode_positions(
         x, p, jnp.array(10000, dtype=jnp.float32)
     ),
     softmax: Callable[
@@ -78,7 +78,7 @@ def encode(
     run_ffn = lambda p, z, _: feedforward.feedforward(p, z, ffn_activation)
 
     # Encode input position:
-    x = encode_position(input_embedding, position)
+    x = encode_positions(input_embeddings, positions)
 
     # Run each layer:
     for p in params:

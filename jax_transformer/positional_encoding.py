@@ -4,7 +4,7 @@ from jaxtyping import Array, Float32, UInt32
 
 
 @check_and_compile()
-def encode_position(
+def encode_positions(
     input_embedding: Float32[Array, "*batch seq d_model"],
     position: Float32[Array, "*batch seq"],
     max_wavelength: Float32[Array, ""] = jnp.array(10000, dtype=jnp.float32),
