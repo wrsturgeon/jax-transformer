@@ -77,7 +77,7 @@ def init(
     )
 
 
-@check_and_compile()
+@check_and_compile(5, 6, 7)
 def run(
     params: Parameters,
     input_embeddings: Float32[Array, "*batch seq_in d_model"],
